@@ -1,5 +1,5 @@
 import { authService } from '@/fbConfig';
-import { FormEvent, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 interface IForm {
@@ -7,9 +7,15 @@ interface IForm {
   password: string;
 }
 
+interface IError {
+  code: string;
+  message: string;
+}
+
 function Auth() {
   const { register, setValue, handleSubmit } = useForm<IForm>();
   const [newAccount, setNewAccount] = useState<boolean>(true);
+  const [error, setError] = useState<string>('');
   const onValid = async ({ email, password }: IForm) => {
     try {
       let data;
@@ -22,10 +28,12 @@ function Auth() {
         data = await authService.signInWithEmailAndPassword(email, password);
       }
     } catch (error) {
-      console.log(error);
+      const err = error as IError;
+
+      setError(err.message);
     }
   };
-
+  const toggleAccount = () => setNewAccount((prev) => !prev);
   return (
     <div>
       <form onSubmit={handleSubmit(onValid)}>
@@ -39,8 +47,15 @@ function Auth() {
           type="password"
           placeholder="Password"
         />
-        <input type="submit" value={newAccount ? 'Create Account' : 'Log In'} />
+        <input
+          type="submit"
+          value={newAccount ? 'Create Account' : 'Sign In'}
+        />
+        {error}
       </form>
+      <span onClick={toggleAccount}>
+        {newAccount ? 'Sign in' : 'Create Account'}
+      </span>
       <div>
         <button>Continue with Google</button>
         <button>Continue with Github</button>
