@@ -3,6 +3,7 @@ import Router from '@components/Router';
 // v9 compat packages are API compatible with v8 code
 
 import { authService } from '@/fbConfig';
+import { useNavigate } from 'react-router-dom';
 
 interface UserInfo {
   displayName: string | null;
@@ -18,10 +19,7 @@ interface UserInfo {
 
 function App() {
   const [init, setInit] = useState<boolean>(false);
-  const [isLoggedIn, setIsLoggedIn] = useState<UserInfo | null>(
-    authService.currentUser,
-  );
-
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   useEffect(() => {
     authService.onAuthStateChanged((user) => {
       if (user) {
@@ -35,8 +33,8 @@ function App() {
 
   return (
     <>
-      {init ? <Router isLoggedIn={isLoggedIn} /> : 'inital...'}
-      <footer>&copy; Nwitter {new Date().getFullYear()}</footer>
+      {init ? <Router isLoggedIn={isLoggedIn} /> : 'Initializing...'}
+      <footer>&copy; {new Date().getFullYear()} Nwitter </footer>
     </>
   );
 }

@@ -1,5 +1,5 @@
-import { authService } from '@/fbConfig';
-import { useState } from 'react';
+import { authService, firebaseInstance } from '@/fbConfig';
+import React, { FormEvent, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 interface IForm {
@@ -10,6 +10,10 @@ interface IForm {
 interface IError {
   code: string;
   message: string;
+}
+
+interface IAuthProvider {
+  providerId: string;
 }
 
 function Auth() {
@@ -32,6 +36,20 @@ function Auth() {
 
       setError(err.message);
     }
+  };
+  const handleSocialBtn = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    const {
+      currentTarget: { name },
+    } = event;
+    let provider: any;
+    if (name === 'google') {
+      provider = new firebaseInstance.auth.GoogleAuthProvider();
+    } else if (name === 'github') {
+      provider = new firebaseInstance.auth.GithubAuthProvider();
+    }
+    const data = await authService.signInWithPopup(provider);
   };
   const toggleAccount = () => setNewAccount((prev) => !prev);
   return (
@@ -57,8 +75,12 @@ function Auth() {
         {newAccount ? 'Sign in' : 'Create Account'}
       </span>
       <div>
-        <button>Continue with Google</button>
-        <button>Continue with Github</button>
+        <button onClick={handleSocialBtn} name="google">
+          Continue with Google
+        </button>
+        <button onClick={handleSocialBtn} name="github">
+          Continue with Github
+        </button>
       </div>
     </div>
   );
