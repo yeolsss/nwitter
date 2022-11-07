@@ -3,18 +3,7 @@ import Auth from '@/routes/Auth';
 import Home from '@/routes/Home';
 import Navigation from '@components/Navigation';
 import Profile from '@/routes/Profile';
-
-interface UserInfo {
-  displayName: string | null;
-  email: string | null;
-  phoneNumber: string | null;
-  photoURL: string | null;
-  providerId: string;
-  /**
-   * The user's unique ID.
-   */
-  uid: string;
-}
+import { firebaseUserType } from '@/fbConfig';
 
 interface IRouterProps {
   isLoggedIn: boolean;

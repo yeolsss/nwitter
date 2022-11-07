@@ -2,28 +2,19 @@ import { useEffect, useState } from 'react';
 import Router from '@components/Router';
 // v9 compat packages are API compatible with v8 code
 
-import { authService } from '@/fbConfig';
-import { useNavigate } from 'react-router-dom';
-
-interface UserInfo {
-  displayName: string | null;
-  email: string | null;
-  phoneNumber: string | null;
-  photoURL: string | null;
-  providerId: string;
-  /**
-   * The user's unique ID.
-   */
-  uid: string;
-}
+import { authService, firebaseUserType } from '@/fbConfig';
+import { useSetRecoilState } from 'recoil';
+import { userObjState } from '@/atoms/atom';
 
 function App() {
   const [init, setInit] = useState<boolean>(false);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const setUserObj = useSetRecoilState(userObjState);
   useEffect(() => {
     authService.onAuthStateChanged((user) => {
       if (user) {
         setIsLoggedIn(true);
+        setUserObj(user);
       } else {
         setIsLoggedIn(false);
       }

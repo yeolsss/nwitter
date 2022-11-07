@@ -1,5 +1,7 @@
 // Import the functions you need from the SDKs you need
 import firebase from 'firebase/compat/app';
+import { User as FirebaseUser } from '@firebase/auth';
+
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 import 'firebase/compat/storage';
@@ -21,3 +23,6 @@ firebase.initializeApp(firebaseConfig);
 export const firebaseInstance = firebase;
 export const authService = firebase.auth();
 export const dbService = firebase.firestore();
+
+export type firesoreType = firebase.firestore.DocumentData;
+export type firebaseUserType = FirebaseUser;

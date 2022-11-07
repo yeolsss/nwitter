@@ -1,31 +1,32 @@
-import { dbService, firesoreType } from '@/fbConfig';
+import { userObjState } from '@/atoms/atom';
+import { dbService, firebaseUserType, firesoreType } from '@/fbConfig';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useRecoilValue } from 'recoil';
 
 interface IForm {
   nweet: string;
 }
 
 function Home() {
-  const { register, handleSubmit, setValue } = useForm();
+  const { register, handleSubmit, setValue } = useForm<IForm>();
   const [nweets, setNweets] = useState<firesoreType[]>([]);
-  const getNweets = async () => {
-    const dbNweets = await dbService.collection('nweets').get();
-    dbNweets.forEach((document) => {
-      const nweetObject = {
-        ...document.data(),
-        id: document.id,
-      };
-      setNweets((prev) => [nweetObject, ...prev]);
-    });
-  };
+  const userObj = useRecoilValue(userObjState);
+
   useEffect(() => {
-    getNweets();
+    dbService.collection('nweets').onSnapshot((snapshot) => {
+      const nweetAry = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setNweets(nweetAry);
+    });
   }, []);
   const onValid = async ({ nweet }: IForm) => {
     await dbService.collection('nweets').add({
-      nweet,
+      text: nweet,
       createdAt: Date.now(),
+      creatorId: userObj?.uid,
     });
     setValue('nweet', '');
   };
@@ -43,7 +44,7 @@ function Home() {
       <div>
         {nweets.map((nweet) => (
           <div key={nweet.id}>
-            <h4>{nweet.nweet}</h4>
+            <h4>{nweet.text}</h4>
           </div>
         ))}
       </div>
