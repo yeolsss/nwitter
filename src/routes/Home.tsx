@@ -1,4 +1,5 @@
-import { dbService } from '@/fbConfig';
+import { dbService, firesoreType } from '@/fbConfig';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 interface IForm {
@@ -7,6 +8,20 @@ interface IForm {
 
 function Home() {
   const { register, handleSubmit, setValue } = useForm();
+  const [nweets, setNweets] = useState<firesoreType[]>([]);
+  const getNweets = async () => {
+    const dbNweets = await dbService.collection('nweets').get();
+    dbNweets.forEach((document) => {
+      const nweetObject = {
+        ...document.data(),
+        id: document.id,
+      };
+      setNweets((prev) => [nweetObject, ...prev]);
+    });
+  };
+  useEffect(() => {
+    getNweets();
+  }, []);
   const onValid = async ({ nweet }: IForm) => {
     await dbService.collection('nweets').add({
       nweet,
@@ -14,7 +29,6 @@ function Home() {
     });
     setValue('nweet', '');
   };
-
   return (
     <div>
       <form onSubmit={handleSubmit(onValid)}>
@@ -26,6 +40,13 @@ function Home() {
         />
         <input type="submit" value="Nweet" />
       </form>
+      <div>
+        {nweets.map((nweet) => (
+          <div key={nweet.id}>
+            <h4>{nweet.nweet}</h4>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
