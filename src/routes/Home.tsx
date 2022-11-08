@@ -34,10 +34,9 @@ function Home() {
     <div>
       <form onSubmit={handleSubmit(onValid)}>
         <input
-          {...register('nweet', { required: true })}
+          {...register('nweet', { required: true, maxLength: 120 })}
           type="text"
           placeholder="What'on your mind?"
-          maxLength={120}
         />
         <input type="submit" value="Nweet" />
       </form>
