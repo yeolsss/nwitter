@@ -25,4 +25,7 @@ export const authService = firebase.auth();
 export const dbService = firebase.firestore();
 
 export type firesoreType = firebase.firestore.DocumentData;
-export type firebaseUserType = FirebaseUser;
+export interface INweet extends firesoreType {
+  id: string;
+}
+export type firebaseUserType = firebase.User;

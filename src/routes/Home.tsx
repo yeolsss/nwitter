@@ -1,5 +1,6 @@
 import { userObjState } from '@/atoms/atom';
-import { dbService, firebaseUserType, firesoreType } from '@/fbConfig';
+import Nweet from '@/components/Nweet';
+import { dbService, INweet } from '@/fbConfig';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
@@ -10,12 +11,11 @@ interface IForm {
 
 function Home() {
   const { register, handleSubmit, setValue } = useForm<IForm>();
-  const [nweets, setNweets] = useState<firesoreType[]>([]);
+  const [nweets, setNweets] = useState<INweet[]>([]);
   const userObj = useRecoilValue(userObjState);
-
   useEffect(() => {
     dbService.collection('nweets').onSnapshot((snapshot) => {
-      const nweetAry = snapshot.docs.map((doc) => ({
+      const nweetAry: INweet[] = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
@@ -43,9 +43,7 @@ function Home() {
       </form>
       <div>
         {nweets.map((nweet) => (
-          <div key={nweet.id}>
-            <h4>{nweet.text}</h4>
-          </div>
+          <Nweet key={nweet.id} nweetObj={nweet} />
         ))}
       </div>
     </div>
